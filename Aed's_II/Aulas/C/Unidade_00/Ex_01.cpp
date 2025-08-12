@@ -113,7 +113,7 @@ int main ()
     arr.set(3, 40);
     arr.set(4, 50);
 
-    int x;
+    int x = 0;
     cout << "Digite um numero para procurar: ";
     cin >> x; getchar ( );
 
