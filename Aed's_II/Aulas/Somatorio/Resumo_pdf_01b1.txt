@@ -1,0 +1,228 @@
+# Unidade I — Introdução aos Somatórios
+
+> **Objetivo deste guia**: apresentar de forma simples o conteúdo da *Introdução aos Somatórios – Unidade I:
+Análise de Algoritmos*, com comentários e explicações passo a passo. 
+No final estão as perguntas copiadas exatamente do material,
+ prontas para colar.
+
+---
+
+## O que o material vai mostrar
+
+* **Motivação** (por que usamos somatórios)
+* **Notação** (como escrever os somatórios)
+
+---
+
+## Motivação
+
+### Por que estudar somatórios?
+
+* Quando analisamos algoritmos, queremos saber **quanto tempo** eles demoram e **quanto espaço** eles gastam.
+O custo total geralmente é a **soma** das operações feitas. Como os algoritmos usam laços que repetem várias vezes,
+ os **somatórios (∑)** são a melhor forma de escrever essas somas.
+
+### Exemplo — somatório dos *n* primeiros números
+
+**Pergunta:** “Mostre o somatório dos n primeiros números inteiros”.
+
+**Versão em código:**
+
+```c
+int somatorio(int n){
+    int soma = 0;
+    for(int i = 1; i <= n; i++){
+        soma += i;
+    }
+    return soma;
+}
+```
+
+**Versão em matemática:**
+
+* A mesma soma pode ser escrita como: ∑ {i=1}^{n} i$.
+* Lê-se: “somar i, de 1 até n”.
+
+**Observação:**
+
+* O número inicial (1) é o **limite inferior**.
+
+* O número final (n) é o **limite superior**.
+
+* O que aparece dentro (i) é o **termo da soma**.
+
+---
+
+## Contando comparações no Selection Sort (Exercício 2)
+
+**Pergunta:** “Mostre o número de comparações entre registros que o algoritmo de Seleção realiza”.
+
+**Trecho de código:**
+
+```c
+for (int i = 0; i < (n - 1); i++) {
+    int menor = i;
+    for (int j = (i + 1); j < n; j++){
+        if (array[menor] > array[j]){
+            menor = j;
+        }
+    }
+    swap(menor, i);
+}
+```
+
+ As comparações estão no `if (array[menor] > array[j])`.
+ O laço externo repete (n−1) vezes.
+ O laço interno, para cada i, repete (n − i − 1) vezes.
+
+**Total de comparações:**
+$C(n) = ∑ { i = 0 } ^ { n - 2 } (n - i - 1)$.
+
+  Assim, o Selection Sort faz cerca de **n²/2 comparações**.
+
+---
+
+## Notação Sigma (∑)
+
+### Como funciona
+
+* É uma maneira curta de escrever somas que seguem um padrão.
+* O somatório tem três partes:
+
+  * Limite inferior (onde começa)
+  * Limite superior (onde termina)
+  * O termo que está sendo somado
+
+**Exemplo:** $\sum_{i=0}^{n-2} (n - i - 1)$.
+
+### Várias formas de escrever
+
+* $\sum_{i=1}^{n} a_i$
+* $\sum a_i$ indicando que i vai de 1 até n
+* “$\sum a_i, 1 \le i \le n$”
+
+### Somando só alguns termos
+
+Podemos impor uma condição. Exemplo: “somar apenas os i ímpares”.
+
+* $a_1 + a_3 + a_5 + ...$
+
+---
+
+## Exercícios de somatórios (Exercício 3)
+
+### (a)
+
+$1^2 + 2^2 + 3^2 + 4^2 + 5^2 = 55$.
+
+### (b)
+
+$3(1 + 2 + 3 + 4 + 5) = 3 \cdot 15 = 45$.
+
+### (c)
+
+$(3-2\cdot1) + (3-2\cdot2) + ... + (3-2\cdot5) = -15$.
+
+### (d)
+
+$2(1+2+3+4+5) + 5x = 30 + 5x$.
+
+### (e)
+
+Somando cada termo: resultado = 30.
+
+### (f)
+
+$5\cdot8j - 2(1+2+3+4+5) = 40j - 30$.
+
+---
+
+## Igualdade entre somatórios (Exercício 4)
+
+Se os termos que foram “cortados” são todos zero, os somatórios podem ser iguais.
+
+Exemplo:
+
+* $\sum_{i=0}^{5} i(i-1)(5-i)$
+* $\sum_{i=2}^{4} i(i-1)(5-i)$
+
+Os termos com i=0,1,5 são zero, então dá no mesmo.
+
+---
+
+## Questão de múltipla escolha (Exercício 5)
+
+**Pergunta:** “Qual expressão representa a soma 4 + 9 + 16 + 25 + 36 + 49?”
+
+Esses números são: $2^2, 3^2, 4^2, 5^2, 6^2, 7^2$. Logo:
+
+* Resposta correta: $\sum_{i=0}^{5} (i+2)^2$.
+
+---
+
+## Dicas para resolver somatórios
+
+1. Veja se algum termo é zero nas pontas.
+2. Coloque fatores para fora: $\sum c f(i) = c \sum f(i)$.
+3. Divida a soma: $\sum (f+g) = \sum f + \sum g$.
+4. Lembre fórmulas conhecidas: $\sum i = n(n+1)/2$.
+5. Troque a variável se ficar mais fácil.
+
+---
+
+# PERGUNTAS TRANSCRITAS
+
+### Exercício 1
+
+```
+● Mostre o somatório dos n primeiros números inteiros
+```
+
+### Exercício 2
+
+```
+● Mostre o número de comparações entre registros que o algoritmo de
+Seleção realiza
+```
+
+### Exercício 3
+
+```
+            5 5 5
+a) ∑ n2 = ?  c) ∑ (3 - 2i) = ?  e) ∑ i . (i-1).(5-i) = ?
+         n = 1 1 0
+
+            5 5 5
+b) ∑ 3i = ?  d) ∑ (2i+x) = ?  f) ∑ (8j - 2m) = ?
+            1 1          m = 1
+```
+
+### Exercício 4
+
+```
+● Podemos afirmar que ∑ i . (i-1) . (5-i)   =   ∑ i . (i-1) . (5-i) ? Justifique.
+
+                                          0                                                            2
+
+5                                                            4
+```
+
+### Exercício 5
+
+```
+● Assinale a alternativa que contém a expressão cuja soma é igual a                   
+4 + 9 + 16 + 25 + 36 + 49
+
+                  5             5            5
+
+     a)∑ (i2 + 2i + 4) b) ∑ (3i + 2)2 c) ∑ (i + 2)2
+
+          i = 0          i = 0         i = 0
+```
+
+---
+
+## Fechando
+
+* Agora você tem uma visão geral dos somatórios, exemplos resolvidos e as perguntas do material.
+* Com esse resumo, fica mais fácil treinar para as próximas aulas ou provas.

@@ -20,7 +20,7 @@ class Principal {
       //algoritmo = new Mergesort(n);
       //algoritmo = new Quicksort(n);
       //algoritmo = new Radixsort(n);
-      algoritmo = new Selecao(n);
+      //algoritmo = new Selecao(n);
       //algoritmo = new Shellsort(n);
 
 
