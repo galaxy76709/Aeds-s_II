@@ -118,3 +118,97 @@ Ex 5
 
  ( 5² + 2*5 + 4 )
  //----------
+
+
+unidade01b2 - Somatorios Manipulacao
+
+//--Pagina - 16
+
+Mostre (e justifique) se cada expressão abaixo é verdadeira ou falsa:
+    
+200                      200
+ ----                   ----   
+ \                      \
+ /    k³      =         /     k³   
+ ----                   ----
+k = 0                   k = 1
+
+
+Sao iguais, pelo fato de quando comecam com 
+0 onde 0³ = 0
+1 onde 1³ = 1
+
+e somando ele nao muda tanta coisa 
+
+//----------
+ 
+1000                    1000
+ ----                   ----   
+ \                      \
+ /   ( 3 + p )    =   3 /    p  
+ ----                   ----
+p = 0                    p = 0
+
+Nao sao iguais, pela forma que sao feitos
+    a soma de "p" + 3 sempre criar um valor diferente 
+    sendo assim o valor nao sera igual ( nao sendo assim uma constante )
+
+//----------
+
+n                       n
+ ----                   ----   
+ \                      \
+ /   ( 3*l  )    =    3 /    l  
+ ----                   ----
+l = 1                   l = 1
+
+Sao iguais, pelo fato que como 3 sempre vai multiplicar todos os valores
+multiplicar-los no final, portando, eles sao iguais
+
+//----------
+
+
+12                      12
+ ----                   ----   
+ \                      \
+ /   ( K^P  )    =   (  /    K ) ^P
+ ----                   ----
+K = 0                  K = 0
+
+Nao sao iguais, pelo fato que multiplicar cada um dos valores por ^p 
+e muito diferente que ao terminar o valor do somatorio e elever a p. 
+
+//----------
+
+32                      32
+ ----                   ----   
+ \                      \
+ /   ( 3+t  )    =  75+ /    t
+ ----                   ----
+t = 8                  t = 8 
+
+Sao iguais, pois 
+
+32                      32              32
+ ----                   ----            ----
+ \                      \               \
+ /   ( 3+t  )    =      /    3     +    /  t 
+ ----                   ----            ----
+t = 8                   t = 8           t = 8
+
+
+e notavel que temos uma constanet e apartir da formula
+b -  a + 1 = sendo 
+b = 32 ( limite superior )
+a = 8  ( limite inferior )
+
+32 - 8 = 24 + 1 = 25
+
+multiplicando com 3 ( constante )
+25 * 3 = 75. 
+
+sendo assim sao iguais. 
+
+//----------
+
+
