@@ -265,6 +265,34 @@ os somatorios seriam iguais.
 
 //----------
 
+ Pagina - 20  Exercício
+
+ 
+ ----                   ----   
+ \                      \
+ /   ( 3+2*i  ) =       /   ( 3+2*(4-i)  )
+ ----                   ----
+0 <= i <= 4            0 <= i <= 4  
+
+Pode ver que ambas vao dar o mesmo resultado
+somente os valores estarao ao contrario, mostrando uma das principais
+caracteristicas de um somatorio, suma comutividade. podendo assumir
+varias formatos para representar um so (visse e versa)
+
+    3 + 2 * 0 + ( 3 )
+    3 + 2 * 1 + ( 5 )
+    3 + 2 * 2 + ( 7 )
+    3 + 2 * 3 + ( 9 )
+    3 + 2 * 4   ( 11)
+
+    3 + 2 * (4-0) + ( 11 )
+    3 + 2 * (4-1) + (  9 )
+    3 + 2 * (4-2) + (  7 )
+    3 + 2 * (4-3) + (  5 )
+    3 + 2 * (4-4)   (  3 )
+
+
+   //----------
 
 
 
