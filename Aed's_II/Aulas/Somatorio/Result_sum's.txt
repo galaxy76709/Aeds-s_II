@@ -211,4 +211,64 @@ sendo assim sao iguais.
 
 //----------
 
+    Pagina - 18 
+
+Aplique associatividade para unificar os dois somatórios abaixo:
+
+
+n                       n
+ ----                   ----   
+ \                      \
+ /   ( ai  )    =       /    bi
+ ----                   ----
+3                        1 
+
+Analisar os índices
+
+O primeiro começa em 
+i=3
+i=3.
+
+O segundo começa em 
+i=1
+i=1.
+
+Para poder aplicar associatividade (unificação),
+é necessário alinhar os índices.
+de forma escrita, pode notar que esta assim 
+
+a = 3 + 4 + 5 + 6 ... n 
+b = 1 + 2 + 3 + 4 ... n 
+
+Se quisermos expressar a soma de 
+ai  a partir de i = 1
+i=1, podemos "completar" os termos que faltam:
+
+n                       n
+ ----                   ----   
+ \                      \
+ /   ( ai  )    =       /    ai 
+ ----                   ----
+3                        1 
+
+
+n                       
+ ----                  
+ \                      
+ /   ( ai  )    - (a2 + a2) 
+ ----                   
+3                        
+
+
+sendo assim b e a mesma coisa, portando diminuindo a diferenca de i 
+os somatorios seriam iguais. 
+
+//----------
+
+
+
+
+
+
+
 
