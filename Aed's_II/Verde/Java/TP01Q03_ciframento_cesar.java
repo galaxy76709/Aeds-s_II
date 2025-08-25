@@ -1,7 +1,7 @@
 package Verde.Java;
 import java.util.*;
 
-public class TP03Q03_ciframento_cesar {
+public class TP01Q03_ciframento_cesar {
 
     // Método de ciframento de César com faixa ASCII 32–126
     public static String criptografia(String entrada) {
