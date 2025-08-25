@@ -8,17 +8,9 @@ bool ehPalindromo(const char* str) {
     int direita = strlen(str) - 1;
 
     while (esquerda < direita) {
-        // Pula caracteres não-alfabéticos da esquerda
-        while (esquerda < direita && !isalpha(str[esquerda])) {
-            esquerda++;
-        }
-        // Pula caracteres não-alfabéticos da direita
-        while (esquerda < direita && !isalpha(str[direita])) {
-            direita--;
-        }
-
+        
         if (esquerda < direita) {
-            if (tolower(str[esquerda]) != tolower(str[direita])) {
+            if (str[esquerda] != str[direita]) {
                 return false;
             }
             esquerda++;

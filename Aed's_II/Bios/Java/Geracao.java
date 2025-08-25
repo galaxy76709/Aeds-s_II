@@ -1,3 +1,4 @@
+package Bios.Java;
 /**
  * Geracao de elementos de um array
  * @author Max do Val Machado

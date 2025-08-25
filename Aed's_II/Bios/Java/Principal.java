@@ -3,6 +3,7 @@
  * @author Max do Val Machado
  * @version 3 08/2020
  */
+/**  
 class Principal {
 	public static void main(String[] args) {
 
@@ -46,3 +47,4 @@ class Principal {
 		System.out.println("isOrdenado: " + algoritmo.isOrdenado());
 	}
 }
+   */

@@ -1,3 +1,4 @@
+package Verde.Java;
 import java.util.*;
 
 public class Palindrome {
@@ -6,18 +7,18 @@ public class Palindrome {
         Scanner sc = new Scanner(System.in);
         String text;
         
-        // laço para ler até encontrar "FIM"
+// laço para ler até encontrar "FIM"
         boolean keepRunning = true;
         while (keepRunning) {
             text = sc.nextLine();
             
-            // condição de parada (sem break)
+// condição de parada
             if (text.equals("FIM")) {
+
                 keepRunning = false;
             } else {
-                // normalizando: apenas letras, tudo minúsculo
-                text = text.replaceAll("[^a-zA-Z]", "").toLowerCase();
-                
+
+//inicializando verificao das letras 
                 int start = 0;
                 int end = text.length() - 1;
                 boolean isPalindrome = true;
