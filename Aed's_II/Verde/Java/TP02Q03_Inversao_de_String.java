@@ -30,7 +30,7 @@ public class TP02Q03_Inversao_de_String
         System.out.println ( new_txt );
 
         }
-        
+        sc.close( );
     }
     
 }
