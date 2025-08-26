@@ -1,7 +1,7 @@
 package Verde.Java;
 import java.util.*;
 
-public class Palindrome {
+public class TP01Q01_Palindromo {
     
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
