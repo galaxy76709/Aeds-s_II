@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <string.h> // Agora podemos usar esta biblioteca
+#include <string.h> 
 
 
 int texto_para_inteiro(const char str[]) {
@@ -26,19 +26,20 @@ int sum_numbers(int number) {
 int main(void) {
     char txt[100];
 
-
     fgets(txt, sizeof(txt), stdin);
     txt[strcspn(txt, "\n")] = 0;
 
-    
     while (strcmp(txt, "FIM") != 0) {
-        int x = texto_para_inteiro(txt);
 
+        int x = texto_para_inteiro(txt);
         int resp = sum_numbers(x);
+
+        printf("%d\n", resp);  
+
         fgets(txt, sizeof(txt), stdin);
         txt[strcspn(txt, "\n")] = 0;
     }
 
-    printf("Programa terminado.\n");
     return 0;
 }
+
