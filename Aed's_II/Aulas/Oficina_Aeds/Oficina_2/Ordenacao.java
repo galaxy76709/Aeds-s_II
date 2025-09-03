@@ -58,6 +58,8 @@ public class Ordenacao {
             String mediaFormatada = String.format("%.2f", j.media);
             System.out.printf("%d. %s - Media: %s - Gols: %d\n", 
                               i + 1, j.nome, mediaFormatada, j.gols);
+
+            sc.close();
         }
     }
 }
