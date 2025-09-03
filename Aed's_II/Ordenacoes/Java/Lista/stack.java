@@ -7,7 +7,6 @@ public class stack
     public static void Print_stack(int[] array) {
         if (array == null || array.length == 0) {
             System.out.println("[]");
-            return;
         }
 
         for (int i = 0; i < array.length; i++) { 
