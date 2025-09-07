@@ -3,8 +3,8 @@ package Bios.Java;
 public class FilaCircular {
 
     private int[] data;
-    private int head; // Aponta para o início da fila
-    private int tail; // Aponta para o final da fila
+    private int head; // Aponta para o início da filas
+    private int tail; // Aponta para o final da filas
     private int size; // Tamanho atual da fila
     private int capacity; // Capacidade máxima da fila
 
