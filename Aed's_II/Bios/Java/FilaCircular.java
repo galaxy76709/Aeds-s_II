@@ -27,7 +27,7 @@ public class FilaCircular {
      */
     public boolean enqueue(int value) {
         if (isFull()) {
-            System.out.println("A fila está cheia. Não é possível adicionar o elemento.");
+            System.out.println("A fila esta cheia. Nao e possivel adicionar o elemento.");
             return false;
         }
         if (isEmpty()) {
