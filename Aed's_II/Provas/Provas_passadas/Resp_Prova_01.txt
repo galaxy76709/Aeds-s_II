@@ -1,0 +1,52 @@
+Questao 01 
+
+/*
+
+public void calculate(int n) {
+    for (int i = 1; i <= n; i++) {
+        a *= 2;           // 1 multiplicação por iteração de i
+        for (int j = 1; j <= i; j++) {
+            b *= 2;       // 1 multiplicação por iteração de j
+            c *= 2;       // 1 multiplicação por iteração de j
+        }
+    }
+}
+
+
+*/
+
+1.) 
+
+a. )Como pode ver, a cada interacao de i, J multiplica 2 
+seu somatorio e de:
+
+n
+____
+\
+/   ( 1 + 2i )
+----
+i = 1
+
+b.) fazendo a fomula fechada
+
+n                n
+____            ____
+\               \
+/   1     +   2 /    i 
+----            ----
+i = 1           i = 1
+
+Vendo que o da direita e o somatorio de Gaus pode ser escrito assim 
+
+    N + 2N ( N + 1 ) / 2 
+
+    N + N² + N = N² + 2N -> Sendo assim minha formula fechada. 
+
+c.) Fazendo a prova por inducao 
+
+    Sn = 1² + 2 * 1          = 3 
+
+    1 + 2*1 ( 1 + 1 ) / 2    = 3 
+
+    Logo e verdade a afirmacao 
+
