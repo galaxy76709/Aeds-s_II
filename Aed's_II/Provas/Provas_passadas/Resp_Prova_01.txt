@@ -50,3 +50,29 @@ c.) Fazendo a prova por inducao
 
     Logo e verdade a afirmacao 
 
+
+//----------------
+
+Question 2
+
+boolean isPalindrome(String s) 
+{
+    // Criar uma lista com tamanho igual ao comprimento da string
+    Lista lista = new Lista(s.length());
+    
+    // Inserir todos os caracteres da string na lista (no fim)
+    for (int i = 0; i < s.length(); i++) {
+        lista.inserirFim(s.charAt(i));
+    }
+    
+    // Comparar o primeiro com o ultimo, removendo-os até sobrar 0 ou 1 elemento
+    while (lista.n > 1) {
+        char primeiro = lista.removerInicio();
+        char ultimo = lista.removerFim();
+        if (primeiro != ultimo) {
+            return false;
+        }
+    }
+    return true;
+}
+
