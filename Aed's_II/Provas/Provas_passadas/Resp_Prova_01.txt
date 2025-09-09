@@ -76,3 +76,49 @@ boolean isPalindrome(String s)
     return true;
 }
 
+
+
+Com certeza! Abaixo estão as perguntas da imagem reescritas de forma clara e organizada.
+
+**4. Prove ou refute as afirmações abaixo:**
+
+(a) A complexidade de tempo do algoritmo de ordenação por bolha é sempre $O(n^2)$,
+independentemente da ordenação inicial dos elementos.
+
+Verdadeiro. O algoritmo por bolha, precisa verificar todos os valores do arranjo mesmo se estiverem 
+ordenados
+
+(b) Em uma lista linear, a operação de inserção no início tem complexidade de tempo $O(1)$.
+
+Falso. Sera Big O de ( N ) pelo fato de que precisam anda todos os valores que ja estao no arranjo
+para frente
+
+(c) O somatório $\sum_{i=1}^{n} i$ é equivalente a $O(n)$.
+
+Falso, Por conta que o somatorio de Gaus: "N ( N + 1 ) / 2" Seu Big O sera de ( N² )
+
+
+(d) Uma pilha permite a remoção de elementos com complexidade de tempo constante.
+
+Verdadeiro, pois sendo LIFO ( Last in First out ), o primeiro valor de retirada sera sempre o mesmo
+logo constante
+
+(e) O algoritmo de ordenação por seleção tem complexidade de tempo $O(n^2)$ para o melhor e o pior caso.
+Sim, seu big O e e Big tetha dele tambem e N² pois ele tera que ver todos os valores do arranjo 
+
+(f) No algoritmo de ordenação por seleção, após cada iteração, o menor elemento do array é colocado na posição correta,
+garantindo que a parte ordenada do array esteja sempre na extremidade inicial.
+Sim, por conta que ele procura e começa pelos os menores valores do arranjo 
+
+(g) Em uma fila, a operação de enfileirar (enqueue) é sempre realizada no final da fila, com complexidade de tempo $O(1)$.
+Sim, pois o valor final da fila sempre sera constante
+
+(h) O somatório $\sum_{i=1}^{n} i^2$ é equivalente a $O(n^3)$.
+Sim, Pois o Big O pode receber os valores acima de N² podendo ser tambem N^3
+
+(i) O algoritmo de ordenação por bolha pode ser otimizado para parar mais cedo se não houver trocas em uma passagem,
+tornando sua complexidade de tempo $O(n)$ no melhor caso.
+Sim, caso o arranjo ja esteja ordenado sera somente n 
+
+(j) O algoritmo de ordenação por seleção é um método de ordenação estável.
+Falso. Pois funcina melhor quando o arranjo ja estiver quase todo organizado. 
