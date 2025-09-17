@@ -1,4 +1,4 @@
-package Ordenacoes.Java.Lista;
+package Lista;
 import java.util.*;
 
 public class stack 

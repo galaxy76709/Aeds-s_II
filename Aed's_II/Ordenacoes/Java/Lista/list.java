@@ -1,4 +1,4 @@
-package Ordenacoes.Java.Lista;
+package Lista;
 
 public class list 
 {
