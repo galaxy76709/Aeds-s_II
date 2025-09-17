@@ -1,5 +1,3 @@
-package Ordenacoes.Java;
-
 public class Insertion_Sort 
 {
     static public void Print_Array ( int [ ] array  ) 

@@ -1,4 +1,4 @@
-package Ordenacoes.Java;
+
 import java.util.Arrays;
 
 public class Selection_Sort
