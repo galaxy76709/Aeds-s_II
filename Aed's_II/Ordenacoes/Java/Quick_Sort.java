@@ -1,5 +1,4 @@
 import java.util.Arrays;   
-
 /*  
  * A ideia do Quick Sort é usar o conceito de dividir e conquistar.  
  * Faremos esse Quick Sort de forma recursiva.  
@@ -21,7 +20,6 @@ public class Quick_Sort
             if (array[j] <= pivot)   
             {   
                 i++;  
-
                 // Realizando a troca (swap)  
                 int temp  = array[i];  
                 array[i]  = array[j];  
