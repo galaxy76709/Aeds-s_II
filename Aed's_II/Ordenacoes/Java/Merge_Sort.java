@@ -27,9 +27,9 @@ public class Merge_Sort {
      * @param dir fim do array a ser ordenado
      */
     public void intercalar(int esq, int meio, int dir) {
-        int n1 = meio - esq + 1;
-        int n2 = dir - meio;
-        int i, j, k;
+        int n1 = meio - esq + 1; // pega o lado direito 
+        int n2 = dir - meio;    // pega lado esquerdo 
+        int i  = 0 , j = 0 , k = 0 ;
 
         // Criar subarrays temporários
         int[] a1 = new int[n1 + 1];
@@ -59,7 +59,7 @@ public class Merge_Sort {
 
     /** Método auxiliar para ordenar o array completo */
     public void sort() {
-        MergeSort(0, array.length - 1); // ✅ corrigido
+        MergeSort(0, array.length - 1); 
     }
 
     /** Mostrar array */
