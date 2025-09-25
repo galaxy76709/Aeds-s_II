@@ -1,114 +1,135 @@
 import java.util.Arrays;
-import java.util.Random;
+public class LAB_05_QuickSort_e_seu_pivo 
+{
+    private int[] array; 
 
-public class LAB_05_QuickSort_e_seu_pivo {
-
-    private static final Random rand = new Random();
-
-    // --- Função de troca ---
-    private static void swap(int[] array, int i, int j) {
-        int temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
+// funcao para realizar o swap 
+    private void swap(int x, int y) {
+        int temp    = array[x];
+        array[x]    = array[y];
+        array[y]    = temp; 
     }
 
-    // --- Estratégia 1: Primeiro elemento ---
-    public static void quickSortFirstPivot(int[] array, int left, int right) {
-        if (left < right) {
-            int pivotIndex = partitionFirstPivot(array, left, right);
-            quickSortFirstPivot(array, left, pivotIndex - 1);
-            quickSortFirstPivot(array, pivotIndex + 1, right);
-        }
-    }
-
-    private static int partitionFirstPivot(int[] array, int left, int right) {
-        int pivot = array[left];
-        int i = left + 1;
-        int j = right;
+    /**
+    * Quicksort com pivo no meio.
+    */
+    private void quick_Sort_Middle(int esq, int dir) {
+        int i = esq; 
+        int j = dir; 
+        int pivot = array[(esq + dir) / 2]; // pivo é o do meio
         while (i <= j) {
-            while (i <= j && array[i] <= pivot) i++;
-            while (i <= j && array[j] > pivot) j--;
-            if (i < j) swap(array, i, j);
+            while (array[i] < pivot) { i++; }
+            while (array[j] > pivot) { j--; }
+            if (i <= j) { swap(i, j); i++; j--; }
         }
-        swap(array, left, j);
-        return j;
+        if (esq < j) quick_Sort_Middle(esq, j);
+        if (i < dir) quick_Sort_Middle(i, dir);
     }
 
-    // --- Estrategia 2: Ultimo elemento ---
-    public static void quickSortLastPivot(int[] array, int left, int right) {
-        if (left < right) {
-            int pivotIndex = partitionLastPivot(array, left, right);
-            quickSortLastPivot(array, left, pivotIndex - 1);
-            quickSortLastPivot(array, pivotIndex + 1, right);
+    /**
+    * Quicksort com piv no primeiro elemento.
+    */
+    private void quick_Sort_First(int esq, int dir) {
+        int i = esq;
+        int j = dir;
+        int pivot = array[esq]; // pivo é o primeiro elemento
+        while (i <= j) {
+            while (array[i] < pivot) { i++; }
+            while (array[j] > pivot) { j--; }
+            if (i <= j) { swap(i, j); i++; j--; }
         }
+        if (esq < j) quick_Sort_First(esq, j);
+        if (i < dir) quick_Sort_First(i, dir);
     }
 
-    private static int partitionLastPivot(int[] array, int left, int right) {
-        int pivot = array[right];
-        int i = left - 1;
-        for (int j = left; j < right; j++) {
-            if (array[j] <= pivot) {
-                i++;
-                swap(array, i, j);
-            }
+    /**
+    * Quicksort com pivo no ultimo elemento.
+    */
+    private void quick_Sort_Last(int esq, int dir) {
+        int i = esq;
+        int j = dir;
+        int pivot = array[dir]; // pivo é o ultimo elemento
+        while (i <= j) {
+            while (array[i] < pivot) { i++; }
+            while (array[j] > pivot) { j--; }
+            if (i <= j) { swap(i, j); i++; j--; }
         }
-        swap(array, i + 1, right);
-        return i + 1;
+        if (esq < j) quick_Sort_Last(esq, j);
+        if (i < dir) quick_Sort_Last(i, dir);
     }
 
-    // --- Estrategia 3: Pivo aleatorio ---
-    public static void quickSortRandomPivot(int[] array, int left, int right) {
-        if (left < right) {
-            int pivotIndex = partitionRandomPivot(array, left, right);
-            quickSortRandomPivot(array, left, pivotIndex - 1);
-            quickSortRandomPivot(array, pivotIndex + 1, right);
+    /**
+    * Quicksort com pivo mediana de tres (primeiro, meio, ultimo).
+    */
+    private void quick_Sort_MedianOfThree(int esq, int dir) {
+        int i = esq;
+        int j = dir;
+        int meio = (esq + dir) / 2;
+
+        // calcular a mediana de tres
+        int a = array[esq];
+        int b = array[meio];
+        int c = array[dir];
+        int pivot = 0;
+        if ((a >= b && a <= c) || (a <= b && a >= c)) {
+            pivot = a;
+        } else if ((b >= a && b <= c) || (b <= a && b >= c)) {
+            pivot = b;
+        } else {
+            pivot = c;
         }
-    }
 
-    private static int partitionRandomPivot(int[] array, int left, int right) {
-        int randomIndex = left + rand.nextInt(right - left + 1);
-        swap(array, randomIndex, right);
-        return partitionLastPivot(array, left, right); // reaproveita a lógica do último pivo
-    }
-
-    // --- Estrategia 4: Mediana de tres ---
-    public static void quickSortMedianOfThree(int[] array, int left, int right) {
-        if (left < right) {
-            int pivotIndex = partitionMedianOfThree(array, left, right);
-            quickSortMedianOfThree(array, left, pivotIndex - 1);
-            quickSortMedianOfThree(array, pivotIndex + 1, right);
+        while (i <= j) {
+            while (array[i] < pivot) { i++; }
+            while (array[j] > pivot) { j--; }
+            if (i <= j) { swap(i, j); i++; j--; }
         }
+        if (esq < j) quick_Sort_MedianOfThree(esq, j);
+        if (i < dir) quick_Sort_MedianOfThree(i, dir);
     }
 
-    private static int partitionMedianOfThree(int[] array, int left, int right) {
-        int mid = (left + right) / 2;
-        // Ordena os 3 valores (left, mid, right)
-        if (array[left] > array[mid]) swap(array, left, mid);
-        if (array[left] > array[right]) swap(array, left, right);
-        if (array[mid] > array[right]) swap(array, mid, right);
-        // Usa o mid como pivo
-        swap(array, mid, right);
-        return partitionLastPivot(array, left, right);
+    // métodos publicos para chamar cada versão
+    public void sortMiddle(int[] arr) {
+        this.array = arr;
+        if (arr != null && arr.length > 0) quick_Sort_Middle(0, arr.length - 1);
     }
 
-    // --- Funcao auxiliar para medir desempenho ---
-    private static void testStrategy(String name, int[] original, java.util.function.BiConsumer<int[], int[]> sorter) {
-        int[] array = Arrays.copyOf(original, original.length);
-        long start = System.nanoTime();
-        sorter.accept(array, new int[]{0, array.length - 1});
-        long end = System.nanoTime();
-        System.out.println(name + " -> Tempo: " + (end - start) / 1_000_000.0 + " ms | Ordenado: " + Arrays.toString(array));
+    public void sortFirst(int[] arr) {
+        this.array = arr;
+        if (arr != null && arr.length > 0) quick_Sort_First(0, arr.length - 1);
+    }
+
+    public void sortLast(int[] arr) {
+        this.array = arr;
+        if (arr != null && arr.length > 0) quick_Sort_Last(0, arr.length - 1);
+    }
+
+    public void sortMedianOfThree(int[] arr) {
+        this.array = arr;
+        if (arr != null && arr.length > 0) quick_Sort_MedianOfThree(0, arr.length - 1);
     }
 
     public static void main(String[] args) {
+        LAB_05_QuickSort_e_seu_pivo sorter = new LAB_05_QuickSort_e_seu_pivo();
         int[] myArray = {10, 7, 8, 9, 1, 5, 12, -3};
 
         System.out.println("Array original: " + Arrays.toString(myArray));
 
-        // Testando cada estrategia
-        testStrategy("Primeiro Pivo", myArray, (arr, bounds) -> quickSortFirstPivot(arr, bounds[0], bounds[1]));
-        testStrategy("Último Pivo", myArray, (arr, bounds) -> quickSortLastPivot(arr, bounds[0], bounds[1]));
-        testStrategy("Pivo Aleatório", myArray, (arr, bounds) -> quickSortRandomPivot(arr, bounds[0], bounds[1]));
-        testStrategy("Mediana de Três", myArray, (arr, bounds) -> quickSortMedianOfThree(arr, bounds[0], bounds[1]));
+        // Teste cada estratégia:
+        int[] arr1 = Arrays.copyOf(myArray, myArray.length);
+        sorter.sortMiddle(arr1);
+        System.out.println("Ordenado (pivo meio): " + Arrays.toString(arr1));
+
+        int[] arr2 = Arrays.copyOf(myArray, myArray.length);
+        sorter.sortFirst(arr2);
+        System.out.println("Ordenado (pivo primeiro): " + Arrays.toString(arr2));
+
+        int[] arr3 = Arrays.copyOf(myArray, myArray.length);
+        sorter.sortLast(arr3);
+        System.out.println("Ordenado (pivo ultimo): " + Arrays.toString(arr3));
+
+        int[] arr4 = Arrays.copyOf(myArray, myArray.length);
+        sorter.sortMedianOfThree(arr4);
+        System.out.println("Ordenado (pivo mediana de tres): " + Arrays.toString(arr4));
     }
 }
