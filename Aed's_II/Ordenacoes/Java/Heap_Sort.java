@@ -59,9 +59,8 @@ public class Heap_Sort {
         
         // Cria array baseado em 1 (índice 1 a n)
         array = new int[n + 1];
-        for (int i = 0; i < n; i++) {
-            array[i + 1] = inputArray[i];
-        }
+        for (int i = 0; i < n; i++) 
+           {array[i + 1] = inputArray[i];}
 
         // Construção do heap máximo
         buildMaxHeap(n);
