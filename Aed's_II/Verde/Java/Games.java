@@ -10,19 +10,19 @@ public class Games
 {
 // valores (variaveis) do arquivo csv
     public int                          id; 
-    public int             estimatedOwners;
-    public int                achievements;
-    public int             metacriticScore;
-    public double                    price;
-    public double                userScore;
-    public String                     name;
-    public String              releaseDate;
-    public String [ ]   supportedLanguages;
-    public String [ ]           publishers;
-    public String [ ]           developers;
-    public String [ ]           categories;
-    public String [ ]               genres;
-    public String [ ]                 tags;
+    public int              estimatedOwners;
+    public int                 achievements;
+    public int              metacriticScore;
+    public double                     price;
+    public double                 userScore;
+    public String                      name;
+    public String               releaseDate;
+    public String [ ]    supportedLanguages;
+    public String [ ]            publishers;
+    public String [ ]            developers;
+    public String [ ]            categories;
+    public String [ ]                genres;
+    public String [ ]                  tags;
 
     public Games( 
     // construtor basico para criacao de valores setados
@@ -32,141 +32,130 @@ public class Games
      String [ ] categories, String [ ] genres, String [ ] tags ) 
     {
         this.id                     =               id;
-        this.estimatedOwners        =  estimatedOwners;
-        this.achievements           =     achievements;
-        this.metacriticScore        =  metacriticScore;
+        this.estimatedOwners        =   estimatedOwners;
+        this.achievements           =      achievements;
+        this.metacriticScore        =   metacriticScore;
         this.price                  =            price;
-        this.userScore              =        userScore;
-        this.name                   =             name;
-        this.releaseDate            =      releaseDate;
-        this.supportedLanguages     =  supportedLanguages;
+        this.userScore              =         userScore;
+        this.name                   =              name;
+        this.releaseDate            =       releaseDate;
+        this.supportedLanguages     =   supportedLanguages;
         this.publishers             =        publishers;
         this.developers             =        developers;
         this.categories             =        categories;
-        this.genres                 =           genres;
-        this.tags                   =             tags;
+        this.genres                 =            genres;
+        this.tags                   =              tags;
+
+        ERRO( );    // normalizar campos
     }
 
     //---------------------------||---------------------------\\
-
     
-    public void ERRO ( Games game ) 
+    public void ERRO ( ) 
     {
-
     //---------------------------||---------------------------\\
-
-        String [ ] relaseDate_TMP = game.releaseDate.split("/"); 
-        StringBuilder sb  = new StringBuilder( );  
-
-        for ( int i = 0; i < 3; i++ ) 
+        // Corrigir data
+        if ( releaseDate != null && releaseDate.trim().length() > 0 )
         {
-            if ( i < relaseDate_TMP.length && !relaseDate_TMP[i].trim().isEmpty() )
-            { sb.append ( relaseDate_TMP [ i ] ); } 
-            
-            else 
-            { sb.append ( "01" ); }
+            String [ ] partes = releaseDate.split("/");
+            String novaData = "";
+            int i = 0;
 
-            if ( i < 2 ) sb.append("/");
-        }
-
-        game.releaseDate = sb.toString( ); 
-
-    //---------------------------||---------------------------\\
-
-        String estimatedOwners_STR = String.valueOf(game.estimatedOwners);
-        StringBuilder sb_2 = new StringBuilder(); 
-
-        for ( int i = 0 ; i < estimatedOwners_STR.length(); i++  )
-        {
-            if ( Character.isDigit(estimatedOwners_STR.charAt(i)) )
+            while ( i < 3 )
             {
-                sb_2.append(estimatedOwners_STR.charAt(i));
+                if ( i < partes.length && partes[i].trim().length() > 0 )
+                { novaData = novaData + partes[i]; }
+                else
+                { novaData = novaData + "01"; }
+
+                if ( i < 2 )
+                { novaData = novaData + "/"; }
+
+                i = i + 1;
             }
+
+            releaseDate = novaData;
         }
 
-        if ( sb_2.length() > 0 )
-            game.estimatedOwners = Integer.parseInt(sb_2.toString());
-        else
-            game.estimatedOwners = 0;
+    //---------------------------||---------------------------\\
+        if ( estimatedOwners < 0 )
+        { estimatedOwners = 0; }
 
     //---------------------------||---------------------------\\
-
-        // Se preço for "Free to Play" ou vazio
-        String price_STR = String.valueOf( game.price );
-
-        if ( price_STR.equalsIgnoreCase("Free to Play") || price_STR.trim().equals("0") )
-        {  game.price = 0.0;  }
+        if ( price < 0 )
+        { price = 0.0; }
 
     //---------------------------||---------------------------\\
-
-        // Se meta vazio
-        if ( game.metacriticScore <= 0 )
-        { game.metacriticScore = -1; }
+        if ( metacriticScore <= 0 )
+        { metacriticScore = -1; }
 
     //---------------------------||---------------------------\\
-
-        // Se userScore vazio ou "tbd"
-        String userScore_STR = String.valueOf ( game.userScore ); 
-
-        if ( userScore_STR.equalsIgnoreCase("tbd") || userScore_STR.trim().isEmpty() || game.userScore == 0.0 )
-        { game.userScore = -1.0; }
+        if ( userScore <= 0.0 )
+        { userScore = -1.0; }
 
     //---------------------------||---------------------------\\
-
-        // Se achievements vazio
-        if ( game.achievements < 0 )
-        { game.achievements = 0; }
+        if ( achievements < 0 )
+        { achievements = 0; }
 
     //---------------------------||---------------------------\\
-
     }
 
     public static class CSVreader 
     {
         public static List<Games> readCSV(String filePath) 
         { 
-            List <Games> gamesList = new ArrayList<>(); 
+            List <Games> gamesList = new ArrayList<Games>(); 
 
-            try (BufferedReader br = new BufferedReader(new FileReader(filePath))) 
+            try
             {
-// descartar cabeçalho
-                String line = br.readLine();
+                BufferedReader br = new BufferedReader(new FileReader(filePath));
+                String line = br.readLine();  // descartar cabeçalho
 
-                while ( (line = br.readLine()) != null )
+                line = br.readLine();
+
+                while ( line != null )
                 {
-                    String [ ] fields = line.split(",");
+                    if ( line.trim().length() > 0 )
+                    {
+                        String [ ] fields = line.split(",");
 
-// tratamento basico 
-                    int id                      = parseIntSafe (fields [0]);
-                    String name                 = fields [ 1 ];
-                    String releaseDate          = fields [ 2 ];
-                    int estimatedOwners         = parseIntSafe(fields[3]);
-                    double price                = parseDoubleSafe(fields[4]);
-                    String[] supportedLanguages = toArray(fields[5]);
-                    int metacriticScore         = parseIntSafe(fields[6]);
-                    double userScore            = parseDoubleSafe(fields[7]);
-                    int achievements            = parseIntSafe(fields[8]);
-                    String[] publishers         = toArray(fields[9]);
-                    String[] developers         = toArray(fields[10]);
-                    String[] categories         = toArray(fields[11]);
-                    String[] genres             = toArray(fields[12]);
-                    String[] tags               = toArray(fields[13]);
+                        if ( fields.length >= 14 )
+                        {
+                            int id                       = parseIntSafe (fields [0]);
+                            String name                  = fields [ 1 ];
+                            String releaseDate           = fields [ 2 ];
+                            int estimatedOwners          = parseIntSafe(fields[3]);
+                            double price                 = parseDoubleSafe(fields[4]);
+                            String[] supportedLanguages  = toArray(fields[5]);
+                            int metacriticScore          = parseIntSafe(fields[6]);
+                            double userScore             = parseDoubleSafe(fields[7]);
+                            int achievements             = parseIntSafe(fields[8]);
+                            String[] publishers          = toArray(fields[9]);
+                            String[] developers          = toArray(fields[10]);
+                            String[] categories          = toArray(fields[11]);
+                            String[] genres              = toArray(fields[12]);
+                            String[] tags                = toArray(fields[13]);
 
-                    Games game = new Games (
-                        id, estimatedOwners, achievements,
-                        metacriticScore, price, userScore,
-                        name, releaseDate,
-                        supportedLanguages, publishers,
-                        developers, categories,
-                        genres, tags
-                    );
-// Chamar o tratamento de erros
-                    game.ERRO(game);
+                            Games game = new Games (
+                                id, estimatedOwners, achievements,
+                                metacriticScore, price, userScore,
+                                name, releaseDate,
+                                supportedLanguages, publishers,
+                                developers, categories,
+                                genres, tags
+                            );
 
-                    gamesList.add(game);
+                            gamesList.add(game);
+                        }
+                    }
+                    line = br.readLine();
                 }
 
-            } catch (IOException e) {
+                br.close();
+
+            }
+            catch (IOException e)
+            {
                 e.printStackTrace();
             }
 
@@ -174,40 +163,58 @@ public class Games
         }
 
         //---------------------------||---------------------------\\
-
         private static int parseIntSafe (String s)
         {
-            if ( s == null || s.trim().isEmpty() ) return 0;
-            try { return Integer.parseInt(s.trim().replaceAll("[^0-9]", "")); }
-            catch (Exception e) { return 0; }
+            int value = 0;
+            if ( s != null && s.trim().length() > 0 )
+            {
+                try
+                { value = Integer.parseInt(s.trim().replaceAll("[^0-9]", "")); }
+                catch (Exception e)
+                { value = 0; }
+            }
+            return value;
         }
 
         //---------------------------||---------------------------\\
-
         private static double parseDoubleSafe (String s)
         {
-            if ( s == null || s.trim().isEmpty() ) return 0.0;
-            try { return Double.parseDouble(s.trim()); }
-            catch (Exception e) { return 0.0; }
+            double value = 0.0;
+            if ( s != null && s.trim().length() > 0 )
+            {
+                try
+                { value = Double.parseDouble(s.trim().replaceAll("[^0-9.]", "")); }
+                catch (Exception e)
+                { value = 0.0; }
+            }
+            return value;
         }
+
         //---------------------------||---------------------------\\
         private static String [ ] toArray (String s)
         {
-            if ( s == null || s.trim().isEmpty() ) return new String[0];
+            String [ ] arr = new String [0];
 
-            s = s.replace("[", "").replace("]", "");
-            String [ ] parts = s.split(",");
+            if ( s != null && s.trim().length() > 0 )
+            {
+                s = s.replace("[", "");
+                s = s.replace("]", "");
 
-            for ( int i = 0; i < parts.length; i++ )
-            { parts[i] = parts[i].trim(); }
+                arr = s.split(",");
 
-            return parts;
+                int i = 0;
+                while ( i < arr.length )
+                {
+                    arr[i] = arr[i].trim();
+                    i = i + 1;
+                }
+            }
+            return arr;
         }
         //---------------------------||---------------------------\\
     }
 
     //---------------------------||---------------------------\\
-
     @Override
     public String toString ( )
     {
@@ -218,24 +225,26 @@ public class Games
                ", meta=" + metacriticScore +
                ", userScore=" + userScore + "]";
     }
-    //---------------------------||---------------------------\\
 
+    //---------------------------||---------------------------\\
     public static void main ( String [ ] args ) 
     {
-        String filePath = "C:\\Users\\kakab\\OneDrive\\Área de Trabalho\\git\\Aeds-s_II\\Aed's_II\\Verde\\Java\\games.csv";
+        String filePath = "tmp/games.csv";
 
         // Ler os jogos
         List <Games> gamesList = Games.CSVreader.readCSV ( filePath );
 
         // Mostrar quantos foram carregados
-        System.out.println ( "Total de jogos carregados: " + gamesList.size() );
+       // System.out.println ( "Total de jogos carregados: " + gamesList.size() );
 
         // Exibir todos
-        System.out.println ( "\nLista completa de jogos:\n" );
+        //System.out.println ( "\nLista completa de jogos:\n" );
 
-        for ( Games g : gamesList )
+        int i = 0;
+        while ( i < gamesList.size() )
         {
-            System.out.println ( g );
+            System.out.println ( gamesList.get(i) );
+            i = i + 1;
         }
     }
 
