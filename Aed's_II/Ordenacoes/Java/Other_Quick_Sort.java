@@ -50,7 +50,7 @@ public class Other_Quick_Sort
         }
 
         this.array = array_sort;
-        int lengh = array_sort.length; 
+        int  lengh = array_sort.length; 
         // chamada recursiva do quick sort
         quick_Sort ( 0 , lengh - 1 ); 
     }
