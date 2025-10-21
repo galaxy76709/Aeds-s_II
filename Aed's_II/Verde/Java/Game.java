@@ -99,7 +99,7 @@ public class Game {
         // --- 1. Formatação da Data de Lançamento ---
         try {
             String dataOriginal = jogo.dataLancamento.trim();
-            Date dataConvertida = null;
+            Date   dataConvertida = null;
 
             // Tenta diferentes formatos de data até encontrar um compatível
             String[] padroesDeData = { "MMM dd, yyyy", "MMMM dd, yyyy", "yyyy-MM-dd", "dd/MM/yyyy", "MM/dd/yyyy" };
