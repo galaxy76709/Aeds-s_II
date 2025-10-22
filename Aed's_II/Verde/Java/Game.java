@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Scanner;
+import java.io.File;
 
 public class Game {
     public int identificadorApp;
@@ -32,7 +33,6 @@ public class Game {
     public String pontuacaoUsuarioBruta;
     public String conquistasBruto;
 
-    // (Construtores e formatarDadosJogo permanecem os mesmos)
     public Game() {
         this.identificadorApp = 0;
         this.nome = "";
@@ -172,70 +172,47 @@ public class Game {
     }
 
     public static class ordering {
-        // contadores estáticos
+
         static int comparacoesSort = 0;
         static int comparacoesSearch = 0;
         static int movimentos = 0;
 
-        /**
-         * Método de swap (troca) de dois elementos no ArrayList.
-         * Incrementa o contador de movimentos.
-         */
+
         private static void swap(ArrayList<Game> jogos, int i, int j) {
             if (i == j) return;
             Game temp = jogos.get(i);
             jogos.set(i, jogos.get(j));
             jogos.set(j, temp);
-            movimentos++; // conta como uma movimentação (troca)
+            movimentos++; 
         }
         
-        // --- INÍCIO: NOVOS MÉTODOS HEAPSORT POR ESTIMADOS ---
 
-        /**
-         * Ordena o ArrayList de jogos usando Heapsort.
-         * Chave primária: proprietariosEstimados (ascendente)
-         * Chave secundária: identificadorApp (ascendente)
-         */
         public static void ordenarPorEstimados(ArrayList<Game> jogos) {
             int n = jogos.size();
             
-            // 1. Construir o Max Heap (o maior elemento fica na raiz)
-            // Começa do último nó "pai" e vai até a raiz
             for (int i = n / 2 - 1; i >= 0; i--) {
                 reconstroiPorEstimados(jogos, n, i);
             }
             
-            // 2. Extrair elementos um por um do heap
             for (int i = n - 1; i > 0; i--) {
-                // Move a raiz atual (maior elemento) para o fim do array
                 swap(jogos, 0, i);
-                
-                // Chama o reconstroi na heap reduzida (tamanho 'i')
                 reconstroiPorEstimados(jogos, i, 0);
             }
         }
 
-        /**
-         * Função auxiliar (heapify/sift-down) para manter a propriedade do Max Heap.
-         * Compara usando 'proprietariosEstimados' e 'identificadorApp' como desempate.
-         */
         private static void reconstroiPorEstimados(ArrayList<Game> jogos, int n, int i) {
             int maior = i;
             int esq = 2 * i + 1;
             int dir = 2 * i + 2;
 
-            // Compara com o filho da esquerda
             if (esq < n) {
-                // Comparação 1: 'esq' > 'maior' (por proprietariosEstimados)
                 comparacoesSort++; 
                 if (jogos.get(esq).proprietariosEstimados > jogos.get(maior).proprietariosEstimados) {
                     maior = esq;
                 } 
-                // Comparação 2: 'esq' == 'maior' (verifica empate)
                 else {
                     comparacoesSort++; 
                     if (jogos.get(esq).proprietariosEstimados == jogos.get(maior).proprietariosEstimados) {
-                        // Comparação 3: 'esq.id' > 'maior.id' (desempate)
                         comparacoesSort++; 
                         if (jogos.get(esq).identificadorApp > jogos.get(maior).identificadorApp) {
                             maior = esq;
@@ -244,18 +221,14 @@ public class Game {
                 }
             }
 
-            // Compara com o filho da direita (usando 'maior' atualizado)
             if (dir < n) {
-                // Comparação 1: 'dir' > 'maior' (por proprietariosEstimados)
                 comparacoesSort++; 
                 if (jogos.get(dir).proprietariosEstimados > jogos.get(maior).proprietariosEstimados) {
                     maior = dir;
                 } 
-                // Comparação 2: 'dir' == 'maior' (verifica empate)
                 else {
                     comparacoesSort++; 
                     if (jogos.get(dir).proprietariosEstimados == jogos.get(maior).proprietariosEstimados) {
-                        // Comparação 3: 'dir.id' > 'maior.id' (desempate)
                         comparacoesSort++; 
                         if (jogos.get(dir).identificadorApp > jogos.get(maior).identificadorApp) {
                             maior = dir;
@@ -264,69 +237,97 @@ public class Game {
                 }
             }
 
-            // Se 'maior' mudou (não é mais o 'i' original), troca e continua
             if (maior != i) {
                 swap(jogos, i, maior);
-                // Recursivamente reconstroi a sub-árvore afetada
                 reconstroiPorEstimados(jogos, n, maior);
             }
         }
         
-        // --- FIM: NOVOS MÉTODOS HEAPSORT ---
 
 
-        // (Métodos antigos de ordenação por nome e pesquisa binária podem ser mantidos ou removidos)
-        // (Vou mantê-los para não quebrar referências, embora não sejam usados no 'main' modificado)
-        
-        public static void ordenarPorNome(ArrayList<Game> jogos) {
-            int n = jogos.size();
-            for (int i = n / 2 - 1; i >= 0; i--) {
-                reconstroi(jogos, n, i);
-            }
-            for (int i = n - 1; i > 0; i--) {
-                swap(jogos, 0, i);
-                reconstroi(jogos, i, 0);
+        public static void ordenarPorPreco(ArrayList<Game> jogos) {
+            if (jogos == null || jogos.size() < 2) return;
+
+            Game[] vetor = jogos.toArray(new Game[0]);
+            Game[] aux = new Game[vetor.length];
+            mergesortPorPreco(vetor, aux, 0, vetor.length - 1);
+
+            for (int i = 0; i < vetor.length; i++) {
+                jogos.set(i, vetor[i]);
             }
         }
 
-        private static void reconstroi(ArrayList<Game> jogos, int n, int i) {
-            int maior = i;
-            int esq = 2 * i + 1;
-            int dir = 2 * i + 2;
-            
-            comparacoesSort++; // (Contador do sort por nome)
-            if (esq < n && Game.normalize(jogos.get(esq).nome).compareTo(Game.normalize(jogos.get(maior).nome)) > 0) {
-                maior = esq;
-            }
-            
-            comparacoesSort++; // (Contador do sort por nome)
-            if (dir < n && Game.normalize(jogos.get(dir).nome).compareTo(Game.normalize(jogos.get(maior).nome)) > 0) {
-                maior = dir;
-            }
 
-            if (maior != i) {
-                swap(jogos, i, maior);
-                reconstroi(jogos, n, maior);
+        private static void mergesortPorPreco(Game[] vetor, Game[] aux, int esq, int dir) {
+            if (esq < dir) {
+                int meio = (esq + dir) / 2;
+                mergesortPorPreco(vetor, aux, esq, meio);
+                mergesortPorPreco(vetor, aux, meio + 1, dir);
+                intercalarPorPreco(vetor, aux, esq, meio, dir);
             }
         }
 
-        public static boolean pesquisa_binaria(ArrayList<Game> jogos, String gameName) {
-            int left = 0;
-            int right = jogos.size() - 1;
-            while (left <= right) {
-                int mid = left + (right - left) / 2;
-                comparacoesSearch++;
-                int cmp = Game.normalize(jogos.get(mid).nome).compareTo(Game.normalize(gameName));
-                if (cmp == 0) return true;
-                else if (cmp < 0) left = mid + 1;
-                else right = mid - 1;
+
+        private static void intercalarPorPreco(Game[] vetor, Game[] aux, int esq, int meio, int dir) {
+
+            for (int i = esq; i <= dir; i++) {
+                aux[i] = vetor[i];
+                movimentos++; 
             }
-            return false;
+
+            int i = esq;       
+            int j = meio + 1;  
+            int k = esq;       
+
+            while (i <= meio && j <= dir) {
+                comparacoesSort++;
+                boolean escolheEsq = false;
+                if (aux[i].preco < aux[j].preco) {
+                    escolheEsq = true;
+                } else {
+                    comparacoesSort++;
+                    if (aux[i].preco == aux[j].preco) {
+                        comparacoesSort++;
+                        if (aux[i].identificadorApp < aux[j].identificadorApp) {
+                            escolheEsq = true;
+                        }
+                    }
+                }
+
+                if (escolheEsq) {
+                    vetor[k] = aux[i];
+                    movimentos++;
+                    i++;
+                } else {
+                    vetor[k] = aux[j];
+                    movimentos++;
+                    j++;
+                }
+                k++;
+            }
+
+            while (i <= meio) {
+                vetor[k] = aux[i];
+                movimentos++;
+                i++;
+                k++;
+            }
+
+            while (j <= dir) {
+                vetor[k] = aux[j];
+                movimentos++;
+                j++;
+                k++;
+            }
         }
+
+
+        public static void ordenarPorNome(ArrayList<Game> jogos) { }
+        private static void reconstroi(ArrayList<Game> jogos, int n, int i) { }
+        public static boolean pesquisa_binaria(ArrayList<Game> jogos, String gameName) { return false; }
     }
 
 
-    // (normalize e findGameById permanecem os mesmos)
     public static String normalize(String s) {
         if (s == null) return "";
         String n = s.trim().toLowerCase(Locale.ROOT);
@@ -343,9 +344,6 @@ public class Game {
         return null;
     }
 
-    // --- Métodos de LOG ---
-
-    // (Log antigo da pesquisa binária - mantido, mas não usado)
     public static void escreverLog(String matricula, long tempoExecucao, int comparacoes) {
         String nomeARQ = matricula + "_binaria.txt";
         try (PrintWriter escritor = new PrintWriter(new FileWriter(nomeARQ))) {
@@ -355,14 +353,21 @@ public class Game {
         }
     }
     
-    /**
-     * NOVO MÉTODO DE LOG: Escreve o log do Heapsort.
-     * Formato: matricula \t comparacoes \t movimentos \t tempoExecucao
-     */
+
     public static void escreverLogHeapsort(String matricula, long tempoExecucao, int comparacoes, int movimentos) {
         String nomeARQ = matricula + "_heapsort.txt";
         try (PrintWriter escritor = new PrintWriter(new FileWriter(nomeARQ))) {
-            // Formato: Matrícula, Comparações, Movimentações, Tempo
+            escritor.println(matricula + "\t" + comparacoes + "\t" + movimentos + "\t" + tempoExecucao);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void escreverLogMergesort(String matricula, long tempoExecucao, int comparacoes, int movimentos) {
+        String nomeARQ = matricula + "_mergesort.txt";
+        try (PrintWriter escritor = new PrintWriter(new FileWriter(nomeARQ))) {
+ 
             escritor.println(matricula + "\t" + comparacoes + "\t" + movimentos + "\t" + tempoExecucao);
         } catch (IOException e) {
             e.printStackTrace();
@@ -371,12 +376,20 @@ public class Game {
 
 
     public static void main(String[] args) {
-       // String caminhoArquivoCSV = "C:\\Users\\kakab\\OneDrive\\Área de Trabalho\\git\\Aeds-s_II\\Aed's_II\\Verde\\Java\\games.csv";
          String caminhoArquivoCSV = "/tmp/games.csv"; 
+        File f = new File(caminhoArquivoCSV);
+        if (!f.exists()) {
+            String alt = "C:\\tmp\\games.csv";
+            f = new File(alt);
+            if (f.exists()) caminhoArquivoCSV = alt;
+            else {
+                alt = "games.csv"; 
+                f = new File(alt);
+                if (f.exists()) caminhoArquivoCSV = alt;
+            }
+        }
         
         ArrayList<Game> listaDeJogos = new ArrayList<>();
-
-        // (Leitura do CSV permanece a mesma)
         try (BufferedReader leitorArquivo = new BufferedReader(new FileReader(caminhoArquivoCSV))) {
             leitorArquivo.readLine();
             String linhaAtual;
@@ -435,26 +448,33 @@ public class Game {
             }
         }
 
-        
         ordering.comparacoesSort = 0;
         ordering.movimentos = 0;
         
         long tempoInicio = System.nanoTime();
-        
-        ordering.ordenarPorEstimados(jogosParaOrdenacao);
+
+        ordering.ordenarPorPreco(jogosParaOrdenacao);
         
         long tempoFim = System.nanoTime();
         long tempoExecucao = tempoFim - tempoInicio;
-        
+ 
 
-
-        for (Game g : jogosParaOrdenacao) {
-            System.out.println(g);
+        System.out.println("| 5 preços mais caros |");
+        int n = jogosParaOrdenacao.size();
+        int inicioCaros = Math.max(0, n - 5);
+        for (int i = n - 1; i >= inicioCaros; i--) {
+            System.out.println(jogosParaOrdenacao.get(i));
         }
 
+        System.out.println();
+        System.out.println("| 5 preços mais baratos |");
+        int limiteBaratos = Math.min(5, n);
+        for (int i = 0; i < limiteBaratos; i++) {
+            System.out.println(jogosParaOrdenacao.get(i));
+        }
 
-        String matricula = "845963"; 
-        escreverLogHeapsort(matricula, tempoExecucao, ordering.comparacoesSort, ordering.movimentos);
+        String matricula = "845963";
+        escreverLogMergesort(matricula, tempoExecucao, ordering.comparacoesSort, ordering.movimentos);
 
         leitorEntrada.close();
     }
