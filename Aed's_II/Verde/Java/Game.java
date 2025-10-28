@@ -1,481 +1,224 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Scanner;
-import java.io.File;
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <time.h>
 
-public class Game {
-    public int identificadorApp;
-    public String nome;
-    public String dataLancamento;
-    public int proprietariosEstimados;
-    public double preco;
-    public String[] idiomasSuportados;
-    public int pontuacaoMetacritic;
-    public double pontuacaoUsuario;
-    public int conquistas;
-    public String[] editoras;
-    public String[] desenvolvedores;
-    public String[] categorias;
-    public String[] generos;
-    public String[] etiquetas;
+#define MAX_STR 200
+#define MAX_LISTA 1000
+#define MAX_VETOR 100
 
-    public String proprietariosEstimadosBruto;
-    public String precoBruto;
-    public String pontuacaoUsuarioBruta;
-    public String conquistasBruto;
+static char *meu_strdup(const char *s) {
+    if (!s) return NULL;
+    size_t n = strlen(s) + 1;
+    char *p = (char*)malloc(n);
+    if (p) memcpy(p, s, n);
+    return p;
+}
 
-    public Game() {
-        this.identificadorApp = 0;
-        this.nome = "";
-        this.dataLancamento = "dd/mm/aaaa";
-        this.proprietariosEstimados = 0;
-        this.preco = 0.0;
-        this.idiomasSuportados = null;
-        this.pontuacaoMetacritic = -1;
-        this.pontuacaoUsuario = -1.0;
-        this.conquistas = 0;
-        this.editoras = null;
-        this.desenvolvedores = null;
-        this.categorias = null;
-        this.generos = null;
-        this.etiquetas = null;
-        this.proprietariosEstimadosBruto = "";
-        this.precoBruto = "";
-        this.pontuacaoUsuarioBruta = "";
-        this.conquistasBruto = "";
+static int meu_strcasecmp(const char *a, const char *b) {
+    if (!a || !b) return (a==b)?0:(a?1:-1);
+    while (*a && *b) {
+        unsigned char ca = (unsigned char) tolower((unsigned char)*a);
+        unsigned char cb = (unsigned char) tolower((unsigned char)*b);
+        if (ca != cb) return ca - cb;
+        a++; b++;
     }
+    return (unsigned char) tolower((unsigned char)*a) - (unsigned char) tolower((unsigned char)*b);
+}
 
-    public Game(int id, String nome, String dataLancamento, String proprietariosBruto, String precoBruto,
-                String[] idiomas, int metacritic, String userScoreBruto, String conquistasBruto, String[] editoras,
-                String[] desenvolvedores, String[] categorias, String[] generos, String[] etiquetas) {
-        this.identificadorApp = id;
-        this.nome = nome;
-        this.dataLancamento = dataLancamento;
-        this.proprietariosEstimadosBruto = proprietariosBruto;
-        this.precoBruto = precoBruto;
-        this.idiomasSuportados = idiomas;
-        this.pontuacaoMetacritic = metacritic;
-        this.pontuacaoUsuarioBruta = userScoreBruto;
-        this.conquistasBruto = conquistasBruto;
-        this.editoras = editoras;
-        this.desenvolvedores = desenvolvedores;
-        this.categorias = categorias;
-        this.generos = generos;
-        this.etiquetas = etiquetas;
+typedef struct Jogo {
+    int identificadorApp;
+    char nome[MAX_STR];
+    char dataLancamento[MAX_STR];
+    int proprietariosEstimados;
+    double preco;
+    char idiomasSuportados[MAX_VETOR][MAX_STR];
+    int numIdiomas;
+    int pontuacaoMetacritic;
+    double pontuacaoUsuario;
+    int conquistas;
+    char editoras[MAX_VETOR][MAX_STR];
+    int numEditoras;
+    char desenvolvedores[MAX_VETOR][MAX_STR];
+    int numDesenvolvedores;
+    char categorias[MAX_VETOR][MAX_STR];
+    int numCategorias;
+    char generos[MAX_VETOR][MAX_STR];
+    int numGeneros;
+    char etiquetas[MAX_VETOR][MAX_STR];
+    int numEtiquetas;
 
-        this.proprietariosEstimados = 0;
-        this.preco = 0.0;
-        this.pontuacaoUsuario = -1.0;
-        this.conquistas = 0;
+    char proprietariosEstimadosBruto[MAX_STR];
+    char precoBruto[MAX_STR];
+    char pontuacaoUsuarioBruta[MAX_STR];
+    char conquistasBruto[MAX_STR];
+} Jogo;
+
+long comparacoes = 0;
+long movimentacoes = 0;
+
+int parseInteiroDigitos(const char *s) {
+    char tmp[MAX_STR]; int j=0;
+    if (!s) return 0;
+    for (int i=0; s[i]; i++) {
+        if (isdigit((unsigned char)s[i])) tmp[j++]=s[i];
     }
+    tmp[j]='\0';
+    return j>0?atoi(tmp):0;
+}
 
-    public Game formatarDadosJogo(Game jogo) {
-        try {
-            String dataOriginal = jogo.dataLancamento.trim();
-            Date dataConvertida = null;
-            String[] padroesDeData = { "MMM dd, yyyy", "MMMM dd, yyyy", "yyyy-MM-dd", "dd/MM/yyyy", "MM/dd/yyyy" };
-            for (String padrao : padroesDeData) {
-                try {
-                    dataConvertida = new SimpleDateFormat(padrao, Locale.ENGLISH).parse(dataOriginal);
-                    break;
-                } catch (ParseException e) {}
-            }
-            if (dataConvertida != null) {
-                jogo.dataLancamento = new SimpleDateFormat("dd/MM/yyyy").format(dataConvertida);
-            } else {
-                jogo.dataLancamento = "01/01/1970";
-            }
-        } catch (Exception e) {
-            jogo.dataLancamento = "01/01/1970";
-        }
+double parseDoubleSeguro(const char *s) {
+    if (!s) return 0.0;
+    if (meu_strcasecmp(s, "Free to Play")==0) return 0.0;
+    return atof(s);
+}
 
-        StringBuilder construtorDigitos = new StringBuilder();
-        String proprietariosRaw = jogo.proprietariosEstimadosBruto.trim();
-        for (int i = 0; i < proprietariosRaw.length(); i++) {
-            if (Character.isDigit(proprietariosRaw.charAt(i))) {
-                construtorDigitos.append(proprietariosRaw.charAt(i));
-            }
-        }
-        if (construtorDigitos.length() > 0) {
-            jogo.proprietariosEstimados = Integer.parseInt(construtorDigitos.toString());
-        } else {
-            jogo.proprietariosEstimados = 0;
-        }
-
-        if (jogo.precoBruto.equalsIgnoreCase("Free to Play")) {
-            jogo.preco = 0.0;
-        } else {
-            try {
-                jogo.preco = Double.parseDouble(jogo.precoBruto);
-            } catch (NumberFormatException e) {
-                jogo.preco = 0.0;
-            }
-        }
-
-        if (jogo.pontuacaoMetacritic == 0) {
-            jogo.pontuacaoMetacritic = -1;
-        }
-
-        if (jogo.pontuacaoUsuarioBruta.equalsIgnoreCase("tbd")) {
-            jogo.pontuacaoUsuario = -1.0;
-        } else {
-            try {
-                jogo.pontuacaoUsuario = Double.parseDouble(jogo.pontuacaoUsuarioBruta);
-            } catch (NumberFormatException e) {
-                jogo.pontuacaoUsuario = -1.0;
-            }
-        }
-
-        if (jogo.conquistasBruto.trim().isEmpty()) {
-            jogo.conquistas = 0;
-        } else {
-            try {
-                jogo.conquistas = Integer.parseInt(jogo.conquistasBruto);
-            } catch (NumberFormatException e) {
-                jogo.conquistas = 0;
-            }
-        }
-
-        return jogo;
+int dividirParaVetor(char destino[MAX_VETOR][MAX_STR], const char *s) {
+    if (!s || strlen(s)==0) return 0;
+    char copia[MAX_STR*2]; strncpy(copia, s, sizeof(copia)-1); copia[sizeof(copia)-1]='\0';
+    for (int i=0; copia[i]; i++) if (copia[i]=='['||copia[i]==']'||copia[i]=='\"' || copia[i]=='\'' ) copia[i]=' ';
+    int contador=0;
+    char *tok = strtok(copia, ",");
+    while (tok && contador<MAX_VETOR) {
+        while (*tok==' ') tok++;
+        strncpy(destino[contador], tok, MAX_STR-1); destino[contador][MAX_STR-1]='\0';
+        contador++;
+        tok = strtok(NULL, ",");
     }
+    return contador;
+}
 
-    public static String formatarArrayParaString(String[] array) {
-        if (array == null || array.length == 0) return "[]";
-        return "[" + String.join(", ", array) + "]";
-    }
+void formatarDados(Jogo *jogo) {
+    if (strlen(jogo->dataLancamento)==0) strcpy(jogo->dataLancamento, "01/01/1970");
+    jogo->proprietariosEstimados = parseInteiroDigitos(jogo->proprietariosEstimadosBruto);
+    jogo->preco = parseDoubleSeguro(jogo->precoBruto);
+    if (jogo->pontuacaoUsuarioBruta[0]==0 || meu_strcasecmp(jogo->pontuacaoUsuarioBruta, "tbd")==0) jogo->pontuacaoUsuario=-1.0;
+    else jogo->pontuacaoUsuario = atof(jogo->pontuacaoUsuarioBruta);
+    if (jogo->pontuacaoMetacritic==0) jogo->pontuacaoMetacritic=-1;
+    jogo->conquistas = parseInteiroDigitos(jogo->conquistasBruto);
+}
 
-    @Override
-    public String toString() {
-        return "=> " + this.identificadorApp + " ## " +
-                this.nome + " ## " +
-                this.dataLancamento + " ## " +
-                this.proprietariosEstimados + " ## " +
-                this.preco + " ## " +
-                formatarArrayParaString(this.idiomasSuportados) + " ## " +
-                this.pontuacaoMetacritic + " ## " +
-                this.pontuacaoUsuario + " ## " +
-                this.conquistas + " ## " +
-                formatarArrayParaString(this.desenvolvedores) + " ## " +
-                formatarArrayParaString(this.editoras) + " ## " +
-                formatarArrayParaString(this.categorias) + " ## " +
-                formatarArrayParaString(this.generos) + " ## " +
-                formatarArrayParaString(this.etiquetas) + " ##";
-    }
+void imprimirJogo(const Jogo *jogo) {
+    printf("=> %d ## %s ## %s ## %d ## %.2f ## ", jogo->identificadorApp, jogo->nome, jogo->dataLancamento, jogo->proprietariosEstimados, jogo->preco);
+    printf("[");
+    for (int i=0;i<jogo->numIdiomas;i++) { printf("%s", jogo->idiomasSuportados[i]); if (i<jogo->numIdiomas-1) printf(", "); }
+    printf("] ## %d ## %.1f ## %d ## ", jogo->pontuacaoMetacritic, jogo->pontuacaoUsuario, jogo->conquistas);
+    printf("["); for (int i=0;i<jogo->numDesenvolvedores;i++){ printf("%s", jogo->desenvolvedores[i]); if (i<jogo->numDesenvolvedores-1) printf(", "); } printf("] ## ");
+    printf("["); for (int i=0;i<jogo->numEditoras;i++){ printf("%s", jogo->editoras[i]); if (i<jogo->numEditoras-1) printf(", "); } printf("] ## ");
+    printf("["); for (int i=0;i<jogo->numCategorias;i++){ printf("%s", jogo->categorias[i]); if (i<jogo->numCategorias-1) printf(", "); } printf("] ## ");
+    printf("["); for (int i=0;i<jogo->numGeneros;i++){ printf("%s", jogo->generos[i]); if (i<jogo->numGeneros-1) printf(", "); } printf("] ## ");
+    printf("["); for (int i=0;i<jogo->numEtiquetas;i++){ printf("%s", jogo->etiquetas[i]); if (i<jogo->numEtiquetas-1) printf(", "); } printf("] ##\n");
+}
 
-    public static class ordering {
+int compararJogo(const Jogo *a, const Jogo *b) {
+    int diaA=1,mesA=1,anoA=1970; int diaB=1,mesB=1,anoB=1970;
+    if (a->dataLancamento[0]) sscanf(a->dataLancamento, "%d/%d/%d", &diaA, &mesA, &anoA);
+    if (b->dataLancamento[0]) sscanf(b->dataLancamento, "%d/%d/%d", &diaB, &mesB, &anoB);
+    comparacoes++; if (anoA<anoB) return -1; comparacoes++; if (anoA>anoB) return 1;
+    comparacoes++; if (mesA<mesB) return -1; comparacoes++; if (mesA>mesB) return 1;
+    comparacoes++; if (diaA<diaB) return -1; comparacoes++; if (diaA>diaB) return 1;
+    comparacoes++; if (a->identificadorApp < b->identificadorApp) return -1; comparacoes++; if (a->identificadorApp > b->identificadorApp) return 1;
+    return 0;
+}
 
-        static int comparacoesSort = 0;
-        static int comparacoesSearch = 0;
-        static int movimentos = 0;
-
-
-        private static void swap(ArrayList<Game> jogos, int i, int j) {
-            if (i == j) return;
-            Game temp = jogos.get(i);
-            jogos.set(i, jogos.get(j));
-            jogos.set(j, temp);
-            movimentos++; 
+int particionar(Jogo arr[], int inicio, int fim) {
+    Jogo pivo = arr[fim];
+    int i = inicio - 1;
+    for (int j=inicio;j<fim;j++) {
+        if (compararJogo(&arr[j], &pivo) < 0) {
+            i++;
+            Jogo temp = arr[i]; arr[i]=arr[j]; arr[j]=temp; movimentacoes++;
         }
+    }
+    Jogo temp = arr[i+1]; arr[i+1]=arr[fim]; arr[fim]=temp; movimentacoes++;
+    return i+1;
+}
+
+void quicksort(Jogo arr[], int inicio, int fim) {
+    if (inicio<fim) {
+        int pi = particionar(arr, inicio, fim);
+        quicksort(arr, inicio, pi-1);
+        quicksort(arr, pi+1, fim);
+    }
+}
+
+int lerCSV(const char *caminho, Jogo lista[], int max) {
+    FILE *fp = fopen(caminho, "r");
+    if (!fp) return 0;
+    char linha[4096];
+    if (!fgets(linha, sizeof(linha), fp)) { fclose(fp); return 0; }
+    int contador=0;
+    while (fgets(linha, sizeof(linha), fp) && contador<max) {
+        linha[strcspn(linha, "\n")]='\0';
+        if (strlen(linha)==0) continue;
         
-
-        public static void ordenarPorEstimados(ArrayList<Game> jogos) {
-            int n = jogos.size();
-            
-            for (int i = n / 2 - 1; i >= 0; i--) {
-                reconstroiPorEstimados(jogos, n, i);
-            }
-            
-            for (int i = n - 1; i > 0; i--) {
-                swap(jogos, 0, i);
-                reconstroiPorEstimados(jogos, i, 0);
-            }
+        char *campos[14];
+        int idxCampos=0;
+        char buf[4096]; int idxBuf=0; int entreAspas=0;
+        for (int i=0; linha[i]; i++) {
+            char c=linha[i];
+            if (c=='"') { entreAspas = !entreAspas; }
+            if (c==',' && !entreAspas) { buf[idxBuf]='\0'; campos[idxCampos++]=meu_strdup(buf); idxBuf=0; }
+            else { buf[idxBuf++]=c; }
         }
-
-        private static void reconstroiPorEstimados(ArrayList<Game> jogos, int n, int i) {
-            int maior = i;
-            int esq = 2 * i + 1;
-            int dir = 2 * i + 2;
-
-            if (esq < n) {
-                comparacoesSort++; 
-                if (jogos.get(esq).proprietariosEstimados > jogos.get(maior).proprietariosEstimados) {
-                    maior = esq;
-                } 
-                else {
-                    comparacoesSort++; 
-                    if (jogos.get(esq).proprietariosEstimados == jogos.get(maior).proprietariosEstimados) {
-                        comparacoesSort++; 
-                        if (jogos.get(esq).identificadorApp > jogos.get(maior).identificadorApp) {
-                            maior = esq;
-                        }
-                    }
-                }
-            }
-
-            if (dir < n) {
-                comparacoesSort++; 
-                if (jogos.get(dir).proprietariosEstimados > jogos.get(maior).proprietariosEstimados) {
-                    maior = dir;
-                } 
-                else {
-                    comparacoesSort++; 
-                    if (jogos.get(dir).proprietariosEstimados == jogos.get(maior).proprietariosEstimados) {
-                        comparacoesSort++; 
-                        if (jogos.get(dir).identificadorApp > jogos.get(maior).identificadorApp) {
-                            maior = dir;
-                        }
-                    }
-                }
-            }
-
-            if (maior != i) {
-                swap(jogos, i, maior);
-                reconstroiPorEstimados(jogos, n, maior);
-            }
-        }
+        buf[idxBuf]='\0'; if (idxCampos<14) campos[idxCampos++]=meu_strdup(buf);
         
-
-
-        public static void ordenarPorPreco(ArrayList<Game> jogos) {
-            if (jogos == null || jogos.size() < 2) return;
-
-            Game[] vetor = jogos.toArray(new Game[0]);
-            Game[] aux = new Game[vetor.length];
-            mergesortPorPreco(vetor, aux, 0, vetor.length - 1);
-
-            for (int i = 0; i < vetor.length; i++) {
-                jogos.set(i, vetor[i]);
-            }
+        if (idxCampos>=14) {
+            Jogo jogo; memset(&jogo,0,sizeof(Jogo));
+            jogo.identificadorApp = atoi(campos[0]);
+            strncpy(jogo.nome, campos[1], MAX_STR-1);
+            strncpy(jogo.dataLancamento, campos[2], MAX_STR-1);
+            strncpy(jogo.proprietariosEstimadosBruto, campos[3], MAX_STR-1);
+            strncpy(jogo.precoBruto, campos[4], MAX_STR-1);
+            jogo.numIdiomas = dividirParaVetor(jogo.idiomasSuportados, campos[5]);
+            jogo.pontuacaoMetacritic = atoi(campos[6]);
+            strncpy(jogo.pontuacaoUsuarioBruta, campos[7], MAX_STR-1);
+            strncpy(jogo.conquistasBruto, campos[8], MAX_STR-1);
+            jogo.numEditoras = dividirParaVetor(jogo.editoras, campos[9]);
+            jogo.numDesenvolvedores = dividirParaVetor(jogo.desenvolvedores, campos[10]);
+            jogo.numCategorias = dividirParaVetor(jogo.categorias, campos[11]);
+            jogo.numGeneros = dividirParaVetor(jogo.generos, campos[12]);
+            jogo.numEtiquetas = dividirParaVetor(jogo.etiquetas, campos[13]);
+            formatarDados(&jogo);
+            lista[contador++]=jogo;
         }
+        for (int k=0;k<idxCampos;k++) free(campos[k]);
+    }
+    fclose(fp);
+    return contador;
+}
 
+int buscarPorId(Jogo lista[], int numItens, int id) {
+    for (int i=0;i<numItens;i++) if (lista[i].identificadorApp==id) return i;
+    return -1;
+}
 
-        private static void mergesortPorPreco(Game[] vetor, Game[] aux, int esq, int dir) {
-            if (esq < dir) {
-                int meio = (esq + dir) / 2;
-                mergesortPorPreco(vetor, aux, esq, meio);
-                mergesortPorPreco(vetor, aux, meio + 1, dir);
-                intercalarPorPreco(vetor, aux, esq, meio, dir);
-            }
-        }
+int main() {
+    char *caminhos[] = {"/tmp/games.csv" };
+    Jogo bancoDeDados[MAX_LISTA]; int total=0;
+    for (int p=0;p<4 && total==0;p++) total = lerCSV(caminhos[p], bancoDeDados, MAX_LISTA);
+    if (total==0) { fprintf(stderr, "games.csv not found\n"); return 1; }
 
-
-        private static void intercalarPorPreco(Game[] vetor, Game[] aux, int esq, int meio, int dir) {
-
-            for (int i = esq; i <= dir; i++) {
-                aux[i] = vetor[i];
-                movimentos++; 
-            }
-
-            int i = esq;       
-            int j = meio + 1;  
-            int k = esq;       
-
-            while (i <= meio && j <= dir) {
-                comparacoesSort++;
-                boolean escolheEsq = false;
-                if (aux[i].preco < aux[j].preco) {
-                    escolheEsq = true;
-                } else {
-                    comparacoesSort++;
-                    if (aux[i].preco == aux[j].preco) {
-                        comparacoesSort++;
-                        if (aux[i].identificadorApp < aux[j].identificadorApp) {
-                            escolheEsq = true;
-                        }
-                    }
-                }
-
-                if (escolheEsq) {
-                    vetor[k] = aux[i];
-                    movimentos++;
-                    i++;
-                } else {
-                    vetor[k] = aux[j];
-                    movimentos++;
-                    j++;
-                }
-                k++;
-            }
-
-            while (i <= meio) {
-                vetor[k] = aux[i];
-                movimentos++;
-                i++;
-                k++;
-            }
-
-            while (j <= dir) {
-                vetor[k] = aux[j];
-                movimentos++;
-                j++;
-                k++;
-            }
-        }
-
-
-        public static void ordenarPorNome(ArrayList<Game> jogos) { }
-        private static void reconstroi(ArrayList<Game> jogos, int n, int i) { }
-        public static boolean pesquisa_binaria(ArrayList<Game> jogos, String gameName) { return false; }
+    Jogo selecionados[MAX_LISTA]; int numSelecionados=0;
+    char linha[128];
+    while (fgets(linha, sizeof(linha), stdin)) {
+        linha[strcspn(linha, "\n")]='\0'; if (strcmp(linha,"FIM")==0) break; if (strlen(linha)==0) continue;
+        int id = atoi(linha);
+        int indice = buscarPorId(bancoDeDados, total, id);
+        if (indice>=0) selecionados[numSelecionados++]=bancoDeDados[indice];
     }
 
+    comparacoes=0; movimentacoes=0;
+    clock_t inicioTempo = clock();
+    if (numSelecionados>0) quicksort(selecionados, 0, numSelecionados-1);
+    clock_t fimTempo = clock();
+    long tempoExecucao = (long)((fimTempo-inicioTempo)*1000000/ CLOCKS_PER_SEC);
 
-    public static String normalize(String s) {
-        if (s == null) return "";
-        String n = s.trim().toLowerCase(Locale.ROOT);
-        n = Normalizer.normalize(n, Normalizer.Form.NFD).replaceAll("\\p{M}", "");
-        n = n.replaceAll("[^a-z0-9\\s]", "");
-        n = n.replaceAll("\\s+", " ");
-        return n;
-    }
+    for (int i=0;i<numSelecionados;i++) imprimirJogo(&selecionados[i]);
 
-    public static Game findGameById(int id, ArrayList<Game> listaJogos) {
-        for (Game jogo : listaJogos) {
-            if (jogo.identificadorApp == id) return jogo;
-        }
-        return null;
-    }
+    FILE *arquivoLog = fopen("845963_quicksort.txt","w");
+    if (arquivoLog) { fprintf(arquivoLog, "845963\t%ld\t%ld\t%ld\n", comparacoes, movimentacoes, tempoExecucao); fclose(arquivoLog); }
 
-    public static void escreverLog(String matricula, long tempoExecucao, int comparacoes) {
-        String nomeARQ = matricula + "_binaria.txt";
-        try (PrintWriter escritor = new PrintWriter(new FileWriter(nomeARQ))) {
-            escritor.println(matricula + "\t" + tempoExecucao + "\t" + comparacoes);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
-
-    public static void escreverLogHeapsort(String matricula, long tempoExecucao, int comparacoes, int movimentos) {
-        String nomeARQ = matricula + "_heapsort.txt";
-        try (PrintWriter escritor = new PrintWriter(new FileWriter(nomeARQ))) {
-            escritor.println(matricula + "\t" + comparacoes + "\t" + movimentos + "\t" + tempoExecucao);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public static void escreverLogMergesort(String matricula, long tempoExecucao, int comparacoes, int movimentos) {
-        String nomeARQ = matricula + "_mergesort.txt";
-        try (PrintWriter escritor = new PrintWriter(new FileWriter(nomeARQ))) {
- 
-            escritor.println(matricula + "\t" + comparacoes + "\t" + movimentos + "\t" + tempoExecucao);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public static void main(String[] args) {
-         String caminhoArquivoCSV = "/tmp/games.csv"; 
-        File f = new File(caminhoArquivoCSV);
-        if (!f.exists()) {
-            String alt = "C:\\tmp\\games.csv";
-            f = new File(alt);
-            if (f.exists()) caminhoArquivoCSV = alt;
-            else {
-                alt = "games.csv"; 
-                f = new File(alt);
-                if (f.exists()) caminhoArquivoCSV = alt;
-            }
-        }
-        
-        ArrayList<Game> listaDeJogos = new ArrayList<>();
-        try (BufferedReader leitorArquivo = new BufferedReader(new FileReader(caminhoArquivoCSV))) {
-            leitorArquivo.readLine();
-            String linhaAtual;
-            while ((linhaAtual = leitorArquivo.readLine()) != null) {
-                ArrayList<String> listaDeCampos = new ArrayList<>();
-                StringBuilder construtorString = new StringBuilder();
-                boolean estaDentroDeAspas = false;
-
-                for (int i = 0; i < linhaAtual.length(); i++) {
-                    char caractereAtual = linhaAtual.charAt(i);
-                    if (caractereAtual == '"') estaDentroDeAspas = !estaDentroDeAspas;
-                    else if (caractereAtual == ',' && !estaDentroDeAspas) {
-                        listaDeCampos.add(construtorString.toString().trim());
-                        construtorString.setLength(0);
-                    } else construtorString.append(caractereAtual);
-                }
-                listaDeCampos.add(construtorString.toString().trim());
-                String[] campos = listaDeCampos.toArray(new String[0]);
-
-                Game novoJogo = new Game(
-                        Integer.parseInt(campos[0]),
-                        campos[1],
-                        campos[2],
-                        campos[3],
-                        campos[4],
-                        campos[5].replaceAll("[\\[\\]\"']", "").split(","),
-                        Integer.parseInt(campos[6]),
-                        campos[7],
-                        campos[8],
-                        campos[9].replaceAll("[\\[\\]\"']", "").split(","),
-                        campos[10].replaceAll("[\\[\\]\"']", "").split(","),
-                        campos[11].replaceAll("[\\[\\]\"']", "").split(","),
-                        campos[12].replaceAll("[\\[\\]\"']", "").split(","),
-                        campos[13].replaceAll("[\\[\\]\"']", "").split(",")
-                );
-
-                novoJogo.formatarDadosJogo(novoJogo);
-                listaDeJogos.add(novoJogo);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        Scanner leitorEntrada = new Scanner(System.in);
-        ArrayList<Game> jogosParaOrdenacao = new ArrayList<>();
-
-        while (true) {
-            if (!leitorEntrada.hasNextLine()) break;
-            String entrada = leitorEntrada.nextLine().trim();
-            if (entrada.equalsIgnoreCase("FIM")) break; 
-            if (entrada.matches("\\d+")) {
-                Game jogo = findGameById(Integer.parseInt(entrada), listaDeJogos);
-                if (jogo != null) {
-                    jogosParaOrdenacao.add(jogo);
-                }
-            }
-        }
-
-        ordering.comparacoesSort = 0;
-        ordering.movimentos = 0;
-        
-        long tempoInicio = System.nanoTime();
-
-        ordering.ordenarPorPreco(jogosParaOrdenacao);
-        
-        long tempoFim = System.nanoTime();
-        long tempoExecucao = tempoFim - tempoInicio;
- 
-
-        System.out.println("| 5 preços mais caros |");
-        int n = jogosParaOrdenacao.size();
-        int inicioCaros = Math.max(0, n - 5);
-        for (int i = n - 1; i >= inicioCaros; i--) {
-            System.out.println(jogosParaOrdenacao.get(i));
-        }
-
-        System.out.println();
-        System.out.println("| 5 preços mais baratos |");
-        int limiteBaratos = Math.min(5, n);
-        for (int i = 0; i < limiteBaratos; i++) {
-            System.out.println(jogosParaOrdenacao.get(i));
-        }
-
-        String matricula = "845963";
-        escreverLogMergesort(matricula, tempoExecucao, ordering.comparacoesSort, ordering.movimentos);
-
-        leitorEntrada.close();
-    }
+    return 0;
 }
