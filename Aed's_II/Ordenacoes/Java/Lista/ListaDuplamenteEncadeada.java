@@ -184,6 +184,54 @@ public class ListaDuplamenteEncadeada
     }
 
 
+    public void isEmpty ( )
+    {  
+        boolean empty = false;
+
+        if ( this.first == null ) 
+        { empty = true; }
+
+        if ( empty )
+        { System.out.println("A lista esta vazia.");}
+        else 
+        { System.out.println("A lista nao esta vazia.");}
+
+    }
+
+
+    public void search ( int elemento )
+    {
+        boolean found  = false;
+        cell temp = this.first;
+
+        while ( temp != null )
+        {
+            if ( temp.elemento == elemento)
+            { found = true;}
+            temp = temp.prox;
+        }
+
+        if ( found )
+        { System.out.println("Elemento ["+elemento+"] encontrado na lista.");}
+        else 
+        { System.out.println("Elemento ["+elemento+"] nao encontrado na lista.");}
+        
+     }  
+
+
+     public void size ( )
+     {
+        int count = 0;
+        cell tmp = this.first;
+        while ( tmp != null )
+        {
+            count++;
+            tmp = tmp.prox;
+        }
+
+        System.out.println("Tamanho da lista: ["+count+"]");
+     }
+
     /**
      * MÉTODO MAIN PARA TESTAR TUDO
      */
@@ -201,22 +249,27 @@ public class ListaDuplamenteEncadeada
         
         // 3. Mostrar a lista (normal e reversa)
         minhaLista.Print();
-        minhaLista.PrintReverse(); // Agora funciona!
+        minhaLista.PrintReverse(); 
+        minhaLista.size();
+
 
         // 4. Remover itens
         System.out.println("\n--- Testando Remocao ---");
         minhaLista.removeStart(); // Remove o 5. Lista: [10] [20]
+        minhaLista.search(20);
         minhaLista.Print();
+        minhaLista.size();
         
         minhaLista.removeEnd();   // Remove o 20. Lista: [10]
         minhaLista.Print();
+        minhaLista.size();
 
         // 5. Testar remocao do último item (Cenário B)
         minhaLista.removeStart(); // Remove o 10. Lista fica vazia.
         minhaLista.Print();
+        minhaLista.size();
 
         // 6. Testar remocao da lista vazia (Cenário A)
         minhaLista.removeStart(); // Deve dar a mensagem de erro.
     }
 }
-// CORREÇÃO 5: Removida a chave '}' extra que estava aqui.
